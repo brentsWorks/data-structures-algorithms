@@ -1,0 +1,73 @@
+if (!D) return;
+    dictionary_print(D);
+    int indexMost, mostSongs = 0;
+    char* frequentAuthorName;
+    Dictionary* authorDict = dictionary_create(D->slots, printAuthorFreq);
+
+    // First find each unique author and insert them into authorDict with their song frequencies
+    for (int i = 0; i < D->slots; ++i) {
+        NodePtr traversalPtr = D->hash_table[i]->head; // start at head of each list
+        for (int j = 0; j < D->hash_table[i]->length; ++j) {
+            KVPair* traversalData = traversalPtr->data;
+            if (!dictionary_find(authorDict, traversalData->value)) { // if author not found in dictionary, 
+                //insert unique author as a key with value (freq) 0
+                // create KVPair to insert into authorDict
+                KVPair* authorPair = (KVPair*)malloc(sizeof(KVPair));
+                authorPair->key = strdup(traversalData->value); // dynamically allocate since we're inserting
+                authorPair->value = 0;
+                dictionary_insert(authorDict, authorPair);
+            } else { // if author exists in dictionary already, find them, increment freq
+                KVPair* author = dictionary_find(authorDict, traversalData->value);
+                printf("%s\n", author->key);
+                if (author != NULL) ++author->value;
+            }
+            traversalPtr = traversalPtr->next;
+        }
+    }
+    // After for loop, we just have to find the max value of all keys in authorDict, 
+    // then print "AUTHOR_NAME: COUNT song(s)" 
+    // if there exists a tie, print all tied authors
+
+    // iterate through dictionary, comparing each author and their count. if two counts are the same at end,
+    // print out names of all composers
+    dictionary_print(authorDict);
+    int maxFreq = 0;
+    int duplicateFreq = 0;
+    int maxFreqIndex = 0;
+    // Even though authorDict's hash table is an array of LL,
+    // we've maintained it to only contain unique keys, so we only have to check the head
+    for (int i = 0; i < authorDict->slots; ++i) {
+
+        NodePtr curr = authorDict->hash_table[i]->head;
+        KVPair* currAuthorData;
+        // ensure curr is not null so we access valid data
+        if (curr->data != NULL) {
+            printf("Hello\n");
+            currAuthorData = curr->data;
+            if (currAuthorData->value > maxFreq) { // compare frequency values
+                // new maxFreq, so duplicateFreq = 0
+                maxFreq = currAuthorData->value;
+                maxFreqIndex = i;
+                duplicateFreq = 0;
+            } else if ( (currAuthorData->value == maxFreq) && currAuthorData->value != 0) {
+                // if matching frequency and curr value isn't 0, we know that
+                // there are authors with matching frequencys thus far (besides null authors which DNE),
+                ++duplicateFreq;
+            }
+        }
+        // regardless of curr being null or not, check iteration
+        if (i == authorDict->slots-1) { // finishing last iteration so check if duplicateFreq > 0
+            if (duplicateFreq > 0) { // if yes, then print all ties
+                matchAndPrintMaxFreqs(authorDict, maxFreq);
+                dictionary_destroy(authorDict);
+                return;
+            }
+            else { // no duplicates at last iteration, print maxFreq author: AUTHOR_NAME: maxFreq song(s)
+                curr = authorDict->hash_table[maxFreqIndex]->head;
+                currAuthorData = curr->data;
+                printAuthorFreq(currAuthorData); // print author with max freq
+                dictionary_destroy(authorDict);
+                return;
+            }
+        } 
+    }

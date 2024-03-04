@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "cairo.h": "c"
+    },
+    "cmake.configureOnOpen": true
+}

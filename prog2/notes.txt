@@ -1,0 +1,28 @@
+ /*
+                char* commaToken = strchr(token, ',');
+                if (commaToken != NULL) {
+                    // there are multiple destinations
+                    commaToken = strtok(token, ","); 
+
+
+                    printf("%s\n", commaToken); // DEBUG HERE (C)
+
+
+                    passenger->destinations = strdup(token); // read first destination
+                    while ((token = strtok(NULL, ",")) != NULL) { // keep reading until comma for each non null token that exists (or until | delimiter)? FIX THIS LINE HERE
+                        printf("%s\n", token);
+                        passenger->destinations = realloc(passenger->destinations, strlen(passenger->destinations) + strlen(token) + 1); // adding space for one more destination
+                        strcat(passenger->destinations, token); // add next destination onto current list
+                    }
+                    //printf("%s\n", token); // TOKEN INVALID BY THE TIME IT REACHES THIS POINT
+                    // DEBUG HERE.
+
+                    printf("Passenger destinations: %s\n", passenger->destinations);
+                } else {
+                    
+                    // only one destination since no occurrence of , separator
+                    passenger->destinations = strdup(token);
+                    printf("Passenger destinations: %s\n", passenger->destinations);
+
+                }
+                */
